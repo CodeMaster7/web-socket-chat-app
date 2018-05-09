@@ -28,7 +28,6 @@ io.on('connect', function (client) {
         let username = match ? match.username : 'anon'
         let timestamp = new Date().toISOString().split('T')[1].slice(0, 8)
         let sendObj = { type: data.type, message: data.message, ind: data.ind, path: data.path, username, timestamp }
-        console.log('Got this event: ', sendObj)
         switch (data.path.split('/')[1]) {
             case 'general':
                 io.sockets.emit('message', sendObj)
@@ -70,7 +69,6 @@ io.on('connect', function (client) {
 
 function generateUsernameListForRoom(roomname) {
     io.of('/').in(roomname).clients(function (error, clients) {
-        console.log('clients in ', roomname, ": ", clients)
         let usernames = clients.map(function (id) {
             let match = users.find(user => user.id === id)
             if (match) return match.username
@@ -81,7 +79,6 @@ function generateUsernameListForRoom(roomname) {
 }
 function generateUsernameListForGeneral() {
     io.of('/').clients(function (error, clients) {
-        console.log('clients in general: ', clients)
         let usernames = clients.map(function (id) {
             let match = users.find(user => user.id === id)
             if (match) return match.username

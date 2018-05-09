@@ -3,7 +3,7 @@ import { Container, Button, Input, Segment, Menu, Header } from 'semantic-ui-rea
 import io from 'socket.io-client'
 import Message from './components/Message/Message';
 
-const socket = io('http://localhost:3005'); // remove link for production
+const socket = io(); // remove link for production
 
 class App extends Component {
   constructor() {
