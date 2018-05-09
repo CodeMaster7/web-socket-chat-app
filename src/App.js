@@ -138,7 +138,7 @@ class App extends Component {
 
         <section>
           <div className='chat-container'>
-            <Menu style={{ borderRadius: 0, color: "2c302e" }}>
+            <Menu style={{ borderRadius: 0, color: "2c302e" }} className='navbar'>
               <Menu.Item
                 name='Web Socket Chat App'
               >
