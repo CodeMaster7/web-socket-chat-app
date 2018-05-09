@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import { Container, Button, Input, Segment, Menu } from 'semantic-ui-react';
+import { Container, Button, Input, Segment, Menu, Header } from 'semantic-ui-react';
 import io from 'socket.io-client'
 import Message from './components/Message/Message';
 
-const socket = io(); // remove link for production
+const socket = io('http://localhost:3005'); // remove link for production
 
 class App extends Component {
   constructor() {
@@ -76,6 +76,7 @@ class App extends Component {
       socket.emit('set username', { username: this.state.usernameInput })
   }
   handleMessageEvent(event) {
+    if (!this.state.userInput.length) return // prevent empty message from being sent.
     socket.emit('event', { type: event.type, message: this.state.userInput, ind: event.ind, path: event.path })
     this.setState({ userInput: '' })
   }
@@ -108,71 +109,77 @@ class App extends Component {
     })
     return (
       <div className="App">
-        <Menu>
-          <Menu.Item
-            name='Web Socket Chat App'
-          >
+        <section>
+          <div className='top-left-header' style={{ minHeight: "2.85714286em" }}> <h3>Users</h3>
+          </div>
+          <div className='userlist-container'>
 
-          </Menu.Item>
-          {
-            this.state.id ?
-              <Menu.Item>socket id: {this.state.id}</Menu.Item>
-              : <Menu.Item name={`disconnected`}></Menu.Item>
-          }
-          {
-            this.state.username ?
-              <Menu.Item>Username: {this.state.username}</Menu.Item>
-              : <Menu.Item name='Set Username' onClick={this.setUsername}></Menu.Item>
-          }
-          {!this.state.username &&
-            <Menu.Item>
-              <Input placeholder='enter username' value={this.state.usernameInput} onChange={this.handleUsernameInput} />
-            </Menu.Item>
-          }
-        </Menu>
-        <Container className='app-container'>
-          <div className='grid'>
-            {rooms}
+            <Header inverted as='h3' dividing>general</Header>
+            <div>
+              {this.state.rooms[0].occupants.map((el, i) => (
+                <p key={i}>{el}</p>
+              ))}
+            </div>
+            <Header inverted as='h3' dividing>private</Header>
+            <div>
+              {this.state.rooms[1].occupants.map((el, i) => (
+                <p key={i}>{el}</p>
+              ))}
+            </div>
+            <Header inverted as='h3' dividing>admin</Header>
+            <div>
+              {this.state.rooms[2].occupants.map((el, i) => (
+                <p key={i}>{el}</p>
+              ))}
+            </div>
 
           </div>
-          <div className='input-container'>
-            <Segment className='users-list-container'>
-              <div>
-                <span>general</span>
-                <span>private</span>
-                <span>admin</span>
-              </div>
-              <div>
-                <div>
-                  {this.state.rooms[0].occupants.map((el, i) => (
-                    <p key={i}>{el}</p>
-                  ))}
-                </div>
-                <div>
-                  {this.state.rooms[1].occupants.map((el, i) => (
-                    <p key={i}>{el}</p>
-                  ))}
-                </div>
-                <div>
-                  {this.state.rooms[2].occupants.map((el, i) => (
-                    <p key={i}>{el}</p>
-                  ))}
-                </div>
-              </div>
-            </Segment>
-            <Input icon='mail outline' placeholder='Your message...' className='input-box' value={this.state.userInput} type="text" onChange={e => this.setState({ userInput: e.target.value })} />
+        </section>
+
+        <section>
+          <div className='chat-container'>
+            <Menu style={{ borderRadius: 0, color: "2c302e" }}>
+              <Menu.Item
+                name='Web Socket Chat App'
+              >
+
+              </Menu.Item>
+              {
+                this.state.id ?
+                  <Menu.Item>socket id: {this.state.id}</Menu.Item>
+                  : <Menu.Item name={`disconnected`}></Menu.Item>
+              }
+              {
+                this.state.username ?
+                  <Menu.Item>Username: {this.state.username}</Menu.Item>
+                  : <Menu.Item name='Set Username' onClick={this.setUsername}></Menu.Item>
+              }
+              {!this.state.username &&
+                <Menu.Item>
+                  <Input placeholder='enter username' value={this.state.usernameInput} onChange={this.handleUsernameInput} />
+                </Menu.Item>
+              }
+            </Menu>
+            <div className='grid'>
+              {rooms}
+
+            </div>
+            <div className='input-container'>
+
+              <Input icon='mail outline colored-icon' placeholder='Your message...' className='input-box' value={this.state.userInput} type="text" onChange={e => this.setState({ userInput: e.target.value })} />
+            </div>
           </div>
-          <hr />
-          <Container className='text-container' textAlign='center'>
-            <p>React, Semantic UI, socket.io, socket.io-client<br />
-              Github: <a href='#'>Github repo</a><br />Inter cetera mala hoc quoque habet stultitia: semper incipit vivere.</p>
-          </Container>
-        </Container>
+          <div className='text-container' >
+            <div>
+              <p><a href='https://reactjs.org/'>React</a>, <a href='https://react.semantic-ui.com/'>Semantic UI</a>, <a href='https://www.npmjs.com/package/socket.io'>Socket.io</a>, <a href='https://www.npmjs.com/package/socket.io-client'>Socket.io-client</a>, <a href='https://github.com/nathan-08/web-socket-chat-app'>Github</a></p>
+            </div>
+          </div>
+        </section>
       </div>
     );
   }
 }
 
 export default App;
-// emit, broadcast, blast
+    // emit, broadcast, blast
 // rooms: general, private, admin
